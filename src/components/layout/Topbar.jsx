@@ -79,7 +79,7 @@ function ChannelSwitcher({ value, onSelect }) {
   )
 }
 
-export default function Topbar({ page, collapsed, onToggleSidebar, workspaceScope, onWorkspaceScopeChange }) {
+export default function Topbar({ page, collapsed, onToggleSidebar, workspaceScope, onWorkspaceScopeChange, session, onSignOut }) {
   const { title, sub } = PAGE_TITLES[page] || {}
   const [search, setSearch] = useState('')
   const [openMenu, setOpenMenu] = useState(null)
@@ -103,6 +103,13 @@ export default function Topbar({ page, collapsed, onToggleSidebar, workspaceScop
   }, [profileMessage])
 
   const unreadCount = notifications.filter((item) => item.unread).length
+  const initials = (session?.name || 'Sara R.')
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('') || 'SR'
+  const displayName = session?.name || 'Sara R.'
 
   return (
     <header ref={rootRef} className="h-16 bg-white dark:bg-[#111116] border-b border-slate-100 dark:border-slate-800 flex items-center px-6 gap-4 flex-shrink-0">
@@ -197,8 +204,8 @@ export default function Topbar({ page, collapsed, onToggleSidebar, workspaceScop
           onClick={() => setOpenMenu((current) => current === 'profile' ? null : 'profile')}
           className="flex items-center gap-2 pl-2 pr-1.5 py-1.5 rounded-xl border border-transparent hover:border-slate-200 hover:bg-slate-50 dark:hover:border-slate-800 dark:hover:bg-slate-800/80 transition-all"
         >
-          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-[10px] text-white font-semibold">SR</div>
-          <span className="text-xs text-slate-600 dark:text-slate-300 font-medium hidden sm:block">Sara R.</span>
+          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-[10px] text-white font-semibold">{initials}</div>
+          <span className="text-xs text-slate-600 dark:text-slate-300 font-medium hidden sm:block">{displayName}</span>
           <ChevronDown className={clsx('w-3 h-3 text-slate-400 hidden sm:block transition-transform', openMenu === 'profile' && 'rotate-180')} />
         </button>
 
@@ -206,10 +213,10 @@ export default function Topbar({ page, collapsed, onToggleSidebar, workspaceScop
           <div className="absolute right-0 top-[calc(100%+0.5rem)] z-30 w-60 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
             <div className="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-xs text-white font-semibold">SR</div>
+                <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-xs text-white font-semibold">{initials}</div>
                 <div className="min-w-0">
-                  <div className="text-sm font-medium text-slate-800 dark:text-slate-100">Sara R.</div>
-                  <div className="text-xs text-slate-400 dark:text-slate-500">Support lead · kiki ops</div>
+                  <div className="text-sm font-medium text-slate-800 dark:text-slate-100">{displayName}</div>
+                  <div className="text-xs text-slate-400 dark:text-slate-500">{session?.email || 'Support lead · kiki ops'}</div>
                 </div>
               </div>
             </div>
@@ -219,6 +226,11 @@ export default function Topbar({ page, collapsed, onToggleSidebar, workspaceScop
                   key={action.id}
                   type="button"
                   onClick={() => {
+                    if (action.id === 'signout') {
+                      setOpenMenu(null)
+                      onSignOut?.()
+                      return
+                    }
                     setProfileMessage(`${action.label} selected`)
                     setOpenMenu(null)
                   }}
