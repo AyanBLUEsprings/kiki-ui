@@ -93,7 +93,7 @@ export default function Auth({ mode, onModeChange, onAuthenticate }) {
               <div className="w-8 h-8 rounded-xl bg-indigo-500 flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.5)]">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm font-semibold tracking-tight text-white">kiki AI Ops</span>
+              <span className="text-sm font-semibold tracking-tight text-white">Qiki AI Ops</span>
               <span className="ml-1 text-[10px] px-2 py-0.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 font-medium tracking-wide uppercase">Beta</span>
             </div>
 
